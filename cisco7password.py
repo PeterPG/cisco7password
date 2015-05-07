@@ -18,9 +18,13 @@ constant = [0x64, 0x73, 0x66, 0x64, 0x3b, 0x6b, 0x66, 0x6f,
 
 cipher = input("Enter CISCO 7 password you collected.\n")
 print("Cipher text you entered is: {}".format(cipher))
-bcipher = binascii.a2b_hex(cipher)
-start, passcode = bcipher[0], ''
-for ch in bcipher[1:]:
-    passcode += chr(ch ^ constant[start])
-    start += 1
-print('Plaintext for cipher text you entered is : {}'.format(passcode))
+try:
+    bcipher = binascii.a2b_hex(cipher)
+    passcode = ''
+    if (bcipher[0]+len(bcipher)) > len(constant):
+        raise Exception('Can`t decode this passcode (Out of range of constant)')
+    for pos, ch in enumerate(bcipher[1:]):
+        passcode += chr(ch ^ constant[bcipher[0]+pos])
+    print('Plaintext for cipher text you entered is : {}'.format(passcode))
+except Exception as e:
+    print('Wrong HEX sequence, check and try again error: {}'.format(e))
